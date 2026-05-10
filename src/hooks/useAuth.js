@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import axiosClient from '../api/axiosClient';
+import { auth, githubProvider } from '../config/firebase';
+import { signInWithPopup } from 'firebase/auth';
 
 export const useAuth = () => {
   const [user, setUser] = useState(null);
@@ -36,6 +38,27 @@ export const useAuth = () => {
     }
   };
 
+  const githubLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, githubProvider);
+      const user = result.user;
+      const { data } = await axiosClient.post('/auth/github-login', {
+        email: user.email,
+        name: user.displayName,
+        githubId: user.uid,
+        avatar: user.photoURL
+      });
+      if (data && data.success) {
+        localStorage.setItem('userInfo', JSON.stringify(data.data));
+        setUser(data.data.user);
+        return data.data.user;
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('GitHub login failed');
+    }
+  };
+
   const register = async (userData) => {
     try {
       const { data } = await axiosClient.post('/auth/register', userData);
@@ -55,5 +78,5 @@ export const useAuth = () => {
     setUser(null);
   };
 
-  return { user, loading, login, register, logout };
+  return { user, loading, login, githubLogin, register, logout };
 };
