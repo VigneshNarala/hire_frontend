@@ -1,50 +1,70 @@
 import React from 'react';
+import { AlertTriangle, CheckCircle, Info, Target, TrendingUp, User } from 'lucide-react';
 
 const EnterpriseAtsResults = ({ metrics }) => {
   if (!metrics) return null;
 
   const getBarColor = (score, max) => {
     const percent = score / max;
-    if (percent > 0.8) return 'bg-green-500';
-    if (percent > 0.5) return 'bg-yellow-500';
-    return 'bg-red-500';
+    if (percent > 0.8) return 'bg-emerald-500';
+    if (percent > 0.5) return 'bg-amber-500';
+    return 'bg-rose-500';
   };
 
+  const sections = [
+    { label: 'Keyword Match', score: metrics.keyword?.score, max: metrics.keyword?.max },
+    { label: 'Semantic Context', score: metrics.semantic?.score, max: metrics.semantic?.max },
+    { label: 'Experience Level', score: metrics.experience?.score, max: metrics.experience?.max },
+    { label: 'Structure', score: metrics.structure?.score, max: metrics.structure?.max },
+    { label: 'Education', score: metrics.education?.score, max: metrics.education?.max },
+    { label: 'Contact Info', score: metrics.contact?.score, max: metrics.contact?.max },
+  ];
+
   return (
-    <div className="mt-8 space-y-8">
-      {/* Overview Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="col-span-1 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-8 text-white text-center shadow-lg">
-          <h3 className="text-xl font-semibold opacity-90">ATS Score</h3>
-          <div className="text-6xl font-bold my-4">{Math.round(metrics.totalScore)}</div>
-          <p className="opacity-80">Out of 100</p>
-          <div className="mt-6 bg-white/20 rounded-xl p-4">
-            <strong className="block text-sm uppercase tracking-wider mb-1">Parse Rate</strong>
-            <div className="text-2xl font-bold">{Math.round(metrics.parseRate)}%</div>
+    <div className="space-y-8">
+      {/* Score Overview */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="glass-card p-8 flex flex-col items-center justify-center text-center">
+          <h3 className="text-white/60 text-sm font-bold uppercase tracking-widest mb-4">ATS Compliance</h3>
+          <div className="relative h-40 w-40 flex items-center justify-center">
+            <svg className="h-full w-full rotate-[-90deg]">
+              <circle
+                cx="80" cy="80" r="70"
+                className="stroke-white/5 fill-none"
+                strokeWidth="12"
+              />
+              <circle
+                cx="80" cy="80" r="70"
+                className="stroke-indigo-500 fill-none transition-all duration-1000"
+                strokeWidth="12"
+                strokeDasharray="440"
+                strokeDashoffset={440 - (440 * (metrics.keyword?.score + metrics.semantic?.score + metrics.experience?.score + metrics.structure?.score + metrics.education?.score + metrics.contact?.score)) / 100}
+                strokeLinecap="round"
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-4xl font-black text-white">{Math.round(metrics.keyword?.score + metrics.semantic?.score + metrics.experience?.score + metrics.structure?.score + metrics.education?.score + metrics.contact?.score)}</span>
+              <span className="text-[10px] text-white/40 font-bold uppercase">Score</span>
+            </div>
           </div>
         </div>
 
-        <div className="col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Score Breakdown</h3>
-          <div className="space-y-4">
-            {[
-              { label: 'Keyword Match', score: metrics.keywordScore, max: 45 },
-              { label: 'Semantic Context', score: metrics.semanticScore, max: 20 },
-              { label: 'Experience Level', score: metrics.experienceScore, max: 12 },
-              { label: 'Structure', score: metrics.structureScore, max: 10 },
-              { label: 'Education', score: metrics.educationScore, max: 8 },
-              { label: 'Contact Info', score: metrics.contactScore, max: 5 },
-            ].map((item, idx) => (
-              <div key={idx} className="flex flex-col">
-                <div className="flex justify-between text-sm font-medium mb-1">
-                  <span className="text-gray-700">{item.label}</span>
-                  <span className="text-gray-900">{Math.round(item.score)}/{item.max}</span>
+        <div className="lg:col-span-2 glass-card p-8">
+          <h3 className="text-white font-bold mb-6 flex items-center gap-2">
+            <Target className="h-5 w-5 text-indigo-400" /> Metric Breakdown
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            {sections.map((item, idx) => (
+              <div key={idx} className="space-y-2">
+                <div className="flex justify-between text-xs font-bold text-white/60">
+                  <span>{item.label}</span>
+                  <span>{Math.round(item.score)}/{item.max}</span>
                 </div>
-                <div className="w-full bg-gray-100 rounded-full h-2">
+                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                   <div 
-                    className={`h-2 rounded-full ${getBarColor(item.score, item.max)}`} 
+                    className={`h-full transition-all duration-1000 ${getBarColor(item.score, item.max)}`}
                     style={{ width: `${(item.score / item.max) * 100}%` }}
-                  ></div>
+                  />
                 </div>
               </div>
             ))}
@@ -52,122 +72,82 @@ const EnterpriseAtsResults = ({ metrics }) => {
         </div>
       </div>
 
-      {/* Critical Issues */}
-      {metrics.parsingIssues && metrics.parsingIssues.length > 0 && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-r-xl shadow-sm">
-          <h3 className="text-lg font-bold text-yellow-800 flex items-center mb-4">
-            ⚠️ Critical Parsing Issues Detected
-          </h3>
-          <div className="space-y-3">
-            {metrics.parsingIssues.map((issue, idx) => (
-              <div key={idx} className="bg-white p-4 rounded-lg shadow-sm">
-                <p className="font-semibold text-gray-800">{issue.message}</p>
-                <div className="flex justify-between items-center mt-2 text-sm">
-                  <span className="text-green-600 font-medium">Fix: {issue.fix}</span>
-                  <span className="text-red-500 font-medium bg-red-50 px-2 py-1 rounded">-{issue.penalty} pts</span>
-                </div>
+      {/* Parsing Issues & Red Flags */}
+      {(metrics.parsing_issues?.length > 0 || metrics.red_flags?.length > 0) && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {metrics.parsing_issues?.length > 0 && (
+            <div className="glass-card border-amber-500/20 p-6">
+              <h4 className="text-amber-400 font-bold flex items-center gap-2 mb-4">
+                <AlertTriangle className="h-5 w-5" /> Parsing Issues
+              </h4>
+              <div className="space-y-3">
+                {metrics.parsing_issues.map((issue, idx) => (
+                  <div key={idx} className="bg-amber-500/5 p-3 rounded-xl border border-amber-500/10">
+                    <p className="text-amber-200 text-sm font-medium">{issue.msg}</p>
+                    <p className="text-amber-500/60 text-[10px] mt-1 italic">Fix: {issue.fix}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          )}
+
+          {metrics.red_flags?.length > 0 && (
+            <div className="glass-card border-rose-500/20 p-6">
+              <h4 className="text-rose-400 font-bold flex items-center gap-2 mb-4">
+                <AlertTriangle className="h-5 w-5" /> Critical Red Flags
+              </h4>
+              <div className="space-y-3">
+                {metrics.red_flags.map((flag, idx) => (
+                  <div key={idx} className="bg-rose-500/5 p-3 rounded-xl border border-rose-500/10">
+                    <p className="text-rose-200 text-sm font-medium">{flag.msg}</p>
+                    <p className="text-rose-500/60 text-[10px] mt-1 italic">Penalty: -{flag.penalty} pts</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Insights Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Contact Info */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border-t-4 border-indigo-500">
-          <h3 className="font-semibold text-indigo-600 mb-4">📋 Contact Information</h3>
-          <div className="flex gap-2">
-            {['email', 'phone', 'linkedin'].map(type => (
-              <div key={type} className={`flex-1 p-2 text-center rounded-lg text-sm font-medium ${metrics.contactInfo[type] ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                {metrics.contactInfo[type] ? '✓' : '✗'} <span className="capitalize">{type}</span>
+      {/* Semantic Clusters & Skills */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="glass-card p-6">
+          <h4 className="text-white font-bold flex items-center gap-2 mb-6">
+            <CheckCircle className="h-5 w-5 text-emerald-400" /> Semantic Clusters
+          </h4>
+          <div className="space-y-4">
+            {metrics.semantic_clusters?.length > 0 ? metrics.semantic_clusters.map((cluster, idx) => (
+              <div key={idx}>
+                <div className="flex justify-between text-xs font-bold text-white/60 mb-1">
+                  <span>{cluster.cluster}</span>
+                  <span>{cluster.strength}%</span>
+                </div>
+                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div className="h-full bg-emerald-500/50" style={{ width: `${cluster.strength}%` }} />
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Technical Skills */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border-t-4 border-indigo-500">
-          <h3 className="font-semibold text-indigo-600 mb-4">🔧 Technical Skills ({metrics.detectedSkills?.length || 0})</h3>
-          <div className="flex flex-wrap gap-2">
-            {metrics.detectedSkills?.slice(0, 15).map((skill, idx) => (
-              <span key={idx} className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-medium">
-                {skill}
-              </span>
-            ))}
-            {metrics.detectedSkills?.length > 15 && (
-              <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-medium">
-                +{metrics.detectedSkills.length - 15} more
-              </span>
+            )) : (
+              <p className="text-white/30 text-sm italic">No strong clusters detected. Add domain-specific context.</p>
             )}
           </div>
         </div>
 
-        {/* Resume Structure */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border-t-4 border-indigo-500">
-          <h3 className="font-semibold text-indigo-600 mb-4">📊 Section Detection</h3>
-          <ul className="space-y-2 text-sm">
-            {Object.entries(metrics.structure || {}).map(([key, value]) => (
-              <li key={key} className="flex justify-between items-center pb-2 border-b border-gray-50 last:border-0">
-                <span className="text-gray-700 capitalize">{key.replace('has', '')}</span>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${value ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                  {value ? '✓ Found' : '✗ Missing'}
-                </span>
-              </li>
+        <div className="glass-card p-6">
+          <h4 className="text-white font-bold flex items-center gap-2 mb-6">
+            <Info className="h-5 w-5 text-indigo-400" /> Detected Skills
+          </h4>
+          <div className="flex flex-wrap gap-2">
+            {metrics.skills?.slice(0, 12).map((skill, idx) => (
+              <span key={idx} className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] text-white/80 font-bold uppercase tracking-wider">
+                {skill}
+              </span>
             ))}
-          </ul>
-        </div>
-
-        {/* Semantic Clusters */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border-t-4 border-indigo-500">
-          <h3 className="font-semibold text-indigo-600 mb-4">🎯 Semantic Match</h3>
-          {metrics.semanticMatches?.length > 0 ? (
-            <div className="space-y-4">
-              {metrics.semanticMatches.map((match, idx) => (
-                <div key={idx}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="font-medium text-gray-700">{match.cluster}</span>
-                    <span className="text-gray-500">{match.strength}%</span>
-                  </div>
-                  <div className="w-full bg-gray-100 rounded-full h-1.5">
-                    <div className="bg-indigo-500 h-1.5 rounded-full" style={{ width: `${match.strength}%` }}></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 text-sm">No strong semantic clusters detected. Target your resume to a specific domain.</p>
-          )}
-        </div>
-
-        {/* Achievements */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border-t-4 border-indigo-500">
-          <h3 className="font-semibold text-indigo-600 mb-4">📈 Achievements & Impact</h3>
-          <div className="space-y-3 text-sm text-gray-700">
-            <p><strong className="text-gray-900">{metrics.bulletQuality?.total || 0}</strong> bullet points analyzed</p>
-            <p><strong className="text-gray-900">{metrics.bulletQuality?.withMetrics || 0}</strong> contain quantifiable metrics</p>
-            <p>Average Length: <strong className="text-gray-900">{metrics.bulletQuality?.avgWords || 0} words</strong></p>
-            <p className="text-xs text-gray-500 mt-2">(Optimal length: 12-28 words per bullet)</p>
+            {metrics.skills?.length > 12 && (
+              <span className="px-3 py-1 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-[10px] text-indigo-300 font-bold uppercase tracking-wider">
+                +{metrics.skills.length - 12} More
+              </span>
+            )}
           </div>
-        </div>
-
-        {/* Red Flags */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border-t-4 border-indigo-500">
-          <h3 className="font-semibold text-indigo-600 mb-4">🚩 Red Flags</h3>
-          {metrics.redFlags?.length > 0 ? (
-            <div className="space-y-3">
-              {metrics.redFlags.map((flag, idx) => (
-                <div key={idx} className="bg-red-50 p-3 rounded text-sm text-red-800">
-                  <strong>{flag.message}</strong>
-                  <div className="mt-1 text-red-600">-{flag.penalty} pts penalty</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex items-center text-green-600 font-medium">
-              ✅ No keyword stuffing or hidden text detected
-            </div>
-          )}
         </div>
       </div>
     </div>
