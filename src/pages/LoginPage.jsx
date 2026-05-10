@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { GraduationCap, ArrowRight, Mail, Lock } from 'lucide-react';
+import { Briefcase, ArrowRight, Mail, Lock, Github, Sparkles } from 'lucide-react';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, githubLogin } = useAuth();
   const navigate = useNavigate();
+
+  const handleAuthResult = (user) => {
+    if (user.role === 'placement') {
+      navigate('/placement');
+    } else {
+      navigate('/student');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,11 +25,19 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const user = await login(email, password);
-      if (user.role === 'placement') {
-        navigate('/placement');
-      } else {
-        navigate('/student');
-      }
+      handleAuthResult(user);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const user = await githubLogin();
+      handleAuthResult(user);
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -29,115 +45,112 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-white">
-      {/* Left Section - Hero/Brand */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-900 via-indigo-950 to-black relative overflow-hidden items-center justify-center p-12">
-        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-pulse"></div>
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-indigo-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-pulse" style={{ animationDelay: '1s' }}></div>
-        
-        <div className="relative z-10 text-white max-w-lg">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="h-12 w-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 shadow-xl">
-              <GraduationCap className="h-8 w-8 text-indigo-400" />
+    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-indigo-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse"></div>
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse"></div>
+
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+        {/* Left Side: Branding */}
+        <div className="hidden lg:block space-y-8">
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 bg-indigo-500 rounded-xl flex items-center justify-center shadow-2xl shadow-indigo-500/20">
+              <Briefcase className="h-7 w-7 text-white" />
             </div>
-            <span className="text-2xl font-bold tracking-tight text-white">Aditya AI-Resume</span>
+            <span className="text-3xl font-black text-white tracking-tighter">SMART<span className="text-indigo-500">HIRE</span></span>
           </div>
-          <h1 className="text-5xl font-extrabold mb-6 leading-[1.1]">
-            Fast-track your <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">career growth</span>
-          </h1>
-          <p className="text-lg text-gray-300 mb-8 leading-relaxed font-medium">
-            Join the elite placement platform exclusive to Aditya University. Get ATS-optimized resumes, real-time GitHub skill verification, and dynamic domain rankings.
-          </p>
           
-          <div className="flex flex-wrap gap-3">
-            <div className="px-4 py-2 rounded-full bg-white/10 border border-white/10 backdrop-blur-md text-sm font-medium shadow-sm flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-400"></span> AI Resume Scoring
+          <h1 className="text-6xl font-black text-white leading-[1.1] tracking-tight">
+            Elevate your <br/>
+            <span className="gradient-text">Placement Game.</span>
+          </h1>
+          
+          <p className="text-xl text-white/40 font-medium leading-relaxed max-w-md">
+            AI-powered resume optimization, real-time coding profile verification, and domain-specific student rankings.
+          </p>
+
+          <div className="flex gap-4">
+            <div className="px-5 py-3 glass-card flex items-center gap-2 text-xs font-bold text-white/60">
+              <Sparkles className="h-4 w-4 text-amber-400" /> ATS Optimization
             </div>
-            <div className="px-4 py-2 rounded-full bg-white/10 border border-white/10 backdrop-blur-md text-sm font-medium shadow-sm flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-400"></span> GitHub Verification
+            <div className="px-5 py-3 glass-card flex items-center gap-2 text-xs font-bold text-white/60">
+              <Github className="h-4 w-4 text-white" /> GitHub Sync
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Right Section - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 relative">
-        <div className="w-full max-w-md">
-          <div className="mb-10">
-            <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome back</h2>
-            <p className="mt-2 text-gray-500 font-medium">Sign in to access your dashboard.</p>
+        {/* Right Side: Form */}
+        <div className="glass-card p-10 lg:p-12 relative overflow-hidden border-white/5 premium-shadow">
+          <div className="mb-8">
+            <h2 className="text-3xl font-black text-white">Welcome back</h2>
+            <p className="text-white/40 text-sm font-medium mt-1">Sign in to your Smart Hire account.</p>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-50/80 border border-red-100 text-red-600 p-4 rounded-xl text-sm text-center font-medium shadow-sm backdrop-blur-sm">
+              <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs font-bold text-center">
                 {error}
               </div>
             )}
 
-            <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Email Address</label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/20 group-focus-within:text-indigo-400 transition-colors" />
                   <input
                     type="email"
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-50 hover:bg-gray-100 focus:bg-white transition-colors duration-200 outline-none"
-                    placeholder="you@aditya.edu.in"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@university.edu"
+                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-white/10 transition-all"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Password</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/20 group-focus-within:text-indigo-400 transition-colors" />
                   <input
                     type="password"
                     required
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-50 hover:bg-gray-100 focus:bg-white transition-colors duration-200 outline-none"
-                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-12 pr-4 text-white placeholder:text-white/10 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:bg-white/10 transition-all"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="pt-2">
-              <button
-                type="submit"
-                disabled={loading}
-                className="group relative w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent text-sm font-bold rounded-xl text-white bg-gray-900 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg hover:shadow-indigo-500/30"
-              >
-                {loading ? 'Signing in...' : 'Sign in'}
-                {!loading && <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />}
-              </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl transition-all shadow-xl shadow-indigo-500/20 flex items-center justify-center gap-2 group"
+            >
+              {loading ? 'Authenticating...' : 'Sign In Now'}
+              {!loading && <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />}
+            </button>
+
+            <div className="relative py-4">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
+              <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-[0.2em]"><span className="bg-slate-950 px-4 text-white/20">Or continue with</span></div>
             </div>
-            
-            <div className="text-center mt-6">
-              <p className="text-sm text-gray-600 font-medium">
-                Don't have an account?{' '}
-                <Link to="/register" className="text-indigo-600 hover:text-indigo-500 font-bold transition-colors">
-                  Sign up here
-                </Link>
-              </p>
-            </div>
+
+            <button
+              type="button"
+              onClick={handleGithubLogin}
+              className="w-full py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-2xl transition-all flex items-center justify-center gap-3"
+            >
+              <Github className="h-5 w-5" /> GitHub
+            </button>
           </form>
 
-          <div className="mt-10 p-4 bg-gray-50 border border-gray-100 rounded-xl text-xs text-center text-gray-500 font-medium">
-            <p className="mb-1 text-gray-700">Demo Credentials:</p>
-            <p>student@example.com / 12345678</p>
-            <p>placement@example.com / 12345678</p>
-          </div>
+          <p className="mt-8 text-center text-sm text-white/40 font-medium">
+            New to the platform? <Link to="/register" className="text-indigo-400 font-bold hover:underline">Create an account</Link>
+          </p>
         </div>
       </div>
     </div>
