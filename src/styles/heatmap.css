@@ -1,0 +1,58 @@
+.heatmap-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 3rem;
+}
+
+.heatmap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.heatmap-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.spinner-mini {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #818cf8;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.heatmap-container {
+  width: 100%;
+}
+
+/* react-calendar-heatmap custom colors */
+.react-calendar-heatmap .color-empty {
+  fill: rgba(255, 255, 255, 0.05);
+}
+
+.react-calendar-heatmap .color-scale-1 { fill: #312e81; }
+.react-calendar-heatmap .color-scale-2 { fill: #4338ca; }
+.react-calendar-heatmap .color-scale-3 { fill: #6366f1; }
+.react-calendar-heatmap .color-scale-4 { fill: #818cf8; }
+
+.react-calendar-heatmap rect {
+  rx: 2;
+  ry: 2;
+}
+
+.react-calendar-heatmap rect:hover {
+  stroke: #fff;
+  stroke-width: 1px;
+}

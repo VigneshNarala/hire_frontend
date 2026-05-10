@@ -1,0 +1,146 @@
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.profile-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 2.5rem;
+}
+
+.profile-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: #818cf8;
+}
+
+.profile-field {
+  margin-bottom: 1.5rem;
+}
+
+.profile-field label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.profile-input {
+  width: 100%;
+  padding: 0.8rem 1.2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.profile-input:focus {
+  outline: none;
+  border-color: rgba(99, 102, 241, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.profile-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-color: transparent;
+}
+
+/* Coding Profiles Section */
+.coding-profiles-section {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+}
+
+.coding-profiles-section h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 3rem;
+}
+
+.coding-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.coding-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.coding-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px);
+}
+
+.coding-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.coding-icon {
+  font-size: 1.5rem;
+}
+
+.coding-icon.github { color: #fff; }
+.coding-icon.linkedin { color: #0077b5; }
+.coding-icon.leetcode { color: #ffa116; }
+.coding-icon.gfg { color: #2f8d46; }
+.coding-icon.codechef { color: #5b4638; }
+.coding-icon.hackerrank { color: #2ec866; }
+
+.view-profile-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: #818cf8;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.view-profile-btn:hover {
+  text-decoration: underline;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 700;
+}
+
+.heatmap-wrapper {
+  margin-bottom: 5rem;
+}
